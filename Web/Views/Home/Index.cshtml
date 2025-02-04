@@ -1,0 +1,103 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="container mt-4">
+    <div class="row g-4">
+        <!-- Левая колонка (Профиль) -->
+        <div class="col-lg-3">
+            <div class="card mb-3">
+                <div class="card-body text-center">
+                    <img src="https://via.placeholder.com/150" class="rounded-circle mb-3" alt="Profile">
+                    <h5>Иван Иванов</h5>
+                    <p class="text-muted">@@ivan_ivanov</p>
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="mb-0">250</h6>
+                            <small>Друзей</small>
+                        </div>
+                        <div>
+                            <h6 class="mb-0">1.2K</h6>
+                            <small>Подписчиков</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Центральная колонка (Лента) -->
+        <div class="col-lg-6">
+            <!-- Создание поста -->
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="d-flex">
+                        <img src="https://via.placeholder.com/50" class="rounded-circle me-3" alt="Profile">
+                        <textarea class="form-control" rows="2" placeholder="Что у вас нового?"></textarea>
+                    </div>
+                    <div class="mt-2 d-flex justify-content-between">
+                        <div>
+                            <button class="btn btn-outline-secondary btn-sm me-2">
+                                <i class="fas fa-image"></i> Фото
+                            </button>
+                            <button class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-video"></i> Видео
+                            </button>
+                        </div>
+                        <button class="btn btn-primary btn-sm">Опубликовать</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Пример поста -->
+            <div class="card post-card mb-3">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="https://via.placeholder.com/40" class="rounded-circle me-2" alt="Profile">
+                        <div>
+                            <h6 class="mb-0">Анна Петрова</h6>
+                            <small class="text-muted">2 часа назад</small>
+                        </div>
+                    </div>
+                    <p>Сегодня прекрасный день для прогулки в парке! 🌳☀️</p>
+                    <img src="https://via.placeholder.com/600x400" class="img-fluid rounded mb-3" alt="Post image">
+                    <div class="d-flex justify-content-between">
+                        <button class="btn btn-outline-secondary btn-sm">
+                            <i class="far fa-thumbs-up"></i> Нравится (45)
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm">
+                            <i class="far fa-comment"></i> Комментировать (12)
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-share"></i> Поделиться
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Правая колонка (Друзья/Группы) -->
+        <div class="col-lg-3">
+            <div class="card mb-3">
+                <div class="card-header">
+                    Активные друзья
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="https://via.placeholder.com/40" class="rounded-circle me-2" alt="Profile">
+                        <div>
+                            <h6 class="mb-0">Мария Сидорова</h6>
+                            <small class="text-muted">Online</small>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="https://via.placeholder.com/40" class="rounded-circle me-2" alt="Profile">
+                        <div>
+                            <h6 class="mb-0">Петр Васильев</h6>
+                            <small class="text-muted">Был(а) 5 мин назад</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
