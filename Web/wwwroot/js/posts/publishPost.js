@@ -11,7 +11,7 @@ function publishPost(userId, userImage, userName) {
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify({ userId: userId, text: text }),
-        success: function() {
+        success: function(data) {
             $('#newsFeed').prepend(`
                 <div class="card post-card mb-3">
                     <div class="card-body">
@@ -22,7 +22,7 @@ function publishPost(userId, userImage, userName) {
                                     <h6 class="mb-0">${userName}</h6>
                                     <small class="text-muted">Только что</small>
                                 </div>
-                                <button class="btn btn-outline-danger btn-sm ms-2" onclick="deletePost(${postId})">
+                                <button class="btn btn-outline-danger btn-sm ms-2" onclick="deletePost(${data.postId})">
                                     <i class="fas fa-times"></i>
                                 </button>
                             </div>

@@ -8,5 +8,6 @@ public class GetPostsVm
     public string Text { get; set; }
     public int LikesCount { get; set; }
     public bool IsLiked { get; set; }
+    public string PostDateHumanized { get; set; }
     public DateTime PostDate { get; set; }
 }

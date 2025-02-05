@@ -5,10 +5,10 @@ using Web.Application.Interfaces;
 
 namespace Web.Application.CQRS.Commands.Posts.PublishPost;
 
-public class PublishPostCommandHandler(IDbContext dbContext) : IRequestHandler<PublishPostCommand>
+public class PublishPostCommandHandler(IDbContext dbContext) : IRequestHandler<PublishPostCommand, int>
 {
     private readonly IDbContext _dbContext = dbContext;
-    public async Task Handle(PublishPostCommand request, CancellationToken cancellationToken)
+    public async Task<int> Handle(PublishPostCommand request, CancellationToken cancellationToken)
     {
         Post post = new()
         {
@@ -19,5 +19,7 @@ public class PublishPostCommandHandler(IDbContext dbContext) : IRequestHandler<P
 
         await _dbContext.Posts.AddAsync(post, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
+
+        return post.Id;
     }
 }

@@ -18,7 +18,7 @@ function loadPosts(userId) {
                                     <div class="d-flex justify-content-between align-items-center w-100">
                                         <div>
                                             <h6 class="mb-0">${post.userName}</h6>
-                                            <small class="text-muted">${new Date(post.postDate).toLocaleString()}</small>
+                                            <small title="${new Date(post.postDate).toLocaleString()}" class="text-muted">${post.postDateHumanized} назад</small>
                                         </div>
                                         ${post.userId === userId ? `
                                         <button class="btn btn-outline-danger btn-sm ms-2" onclick="deletePost(${post.id})">

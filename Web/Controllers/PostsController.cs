@@ -18,8 +18,8 @@ public class PostsController : BaseController
             Text = request.Text,
             UserId = request.UserId
         };
-        await Mediator.Send(command);
-        return Ok();
+        int postId = await Mediator.Send(command);
+        return Ok(postId);
     }
 
     [HttpGet]
