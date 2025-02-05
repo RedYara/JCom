@@ -14,7 +14,7 @@ function loadPosts(userId) {
                         <div class="card post-card mb-3">
                             <div class="card-body">
                                 <div class="d-flex align-items-center mb-3">
-                                    <img src="${post.userImage}" style="width: 60px; height: 60px;" class="rounded-circle me-3 img-thumbnail" alt="Profile">
+                                    <img loading="lazy" src="${post.userImage}" style="width: 60px; height: 60px;" class="rounded-circle me-3 img-thumbnail" alt="Profile">
                                     <div class="d-flex justify-content-between align-items-center w-100">
                                         <div>
                                             <h6 class="mb-0">${post.userName}</h6>
