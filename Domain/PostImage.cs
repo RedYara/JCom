@@ -9,9 +9,9 @@ public class PostImage
     /// <summary>
     /// Путь к изображению
     /// </summary>
-    public string Path { get; set; }
+    public string Path { get; set; } = "";
     /// <summary>
     /// Пост, к которому прикреплено изображение
     /// </summary>
-    public Post Post { get; set; }
+    public Post Post { get; set; } = new();
 }

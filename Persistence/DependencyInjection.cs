@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Domain;
+﻿using Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

@@ -1,12 +1,15 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
 using Persistence;
 using Web.Application;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+        .AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+        });
 builder.Services.AddApplication();
 builder.Services.AddPersistence();
 
@@ -18,18 +21,18 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
             options.AccessDeniedPath = new PathString("/account/accessdenied");
         });
 
+if (builder.Environment.IsDevelopment())
+{
+    Environment.SetEnvironmentVariable("POSTGRESQL_CONNECTION_STRING", "Host=localhost;Database=JCom;Username=postgres;Password=W321ewqW;IncludeErrorDetail=true;");
+}
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
-}
-else
-{
-    Environment.SetEnvironmentVariable("POSTGRESQL_CONNECTION_STRING", "Host=localhost;Database=JCom;Username=postgres;Password=W321ewqW;IncludeErrorDetails=true;");
 }
 
 app.UseHttpsRedirection();

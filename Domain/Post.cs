@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Identity;
-
 namespace Domain;
 
 /// <summary>
@@ -8,8 +6,8 @@ namespace Domain;
 public class Post
 {
     public int Id { get; set; }
-    public string Text { get; set; }
-    public int Likes { get; set; }
+    public string Text { get; set; } = "";
+    public int Likes { get; set; } = 0;
     public DateTime PostDate { get; set; }
     /// <summary>
     /// Изображения, прикреплённые к посту
@@ -18,5 +16,5 @@ public class Post
     /// <summary>
     /// Юзер, которому принадлежит пост
     /// </summary>
-    public User User { get; set; }
+    public User User { get; set; } = new();
 }

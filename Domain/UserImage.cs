@@ -9,9 +9,10 @@ public class UserImage
     /// <summary>
     /// Путь к изображению
     /// </summary>
-    public string Path { get; set; }
+    public string Path { get; set; } = "";
     /// <summary>
     /// Пользователь, которому принадлежит "аватарка"
     /// </summary>
-    public User User { get; set; }
+    public User? User { get; set; }
+    public string UserId { get; set; } = "";
 }

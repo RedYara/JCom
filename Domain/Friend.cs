@@ -6,7 +6,7 @@ public class Friend
     /// <summary>
     /// Пользователь
     /// </summary>
-    public User User { get; set; }
+    public User User { get; set; } = new();
 
     /// <summary>
     /// Идентификатор пользователя, находящийся в списке друзей

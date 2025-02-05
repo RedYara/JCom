@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Identity;
-
 namespace Domain;
 
 public class Like
@@ -16,5 +14,5 @@ public class Like
     /// <summary>
     /// Пользователь, который лайкнул
     /// </summary>
-    public User User { get; set; }
+    public User User { get; set; } = new();
 }
