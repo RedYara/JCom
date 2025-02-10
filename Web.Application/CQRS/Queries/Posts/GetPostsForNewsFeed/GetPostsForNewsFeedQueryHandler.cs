@@ -25,13 +25,17 @@ public class GetPostsForNewsFeedQueryHandler(IDbContext dbContext) : IRequestHan
         // Преобразуем посты в нужный формат
         var result = posts.Select(x => new GetPostsVm()
         {
-            LikesCount = x.Likes,
+            PostId = x.Id,
+            LikesCount = _dbContext.Likes.Include(x => x.Post).Count(y => y.Post == x),
             PostDate = x.PostDate,
             PostDateHumanized = (-(DateTime.UtcNow - x.PostDate)).Humanize(),
             Text = x.Text,
             UserImage = x.User.UserImage.Path,
             UserName = x.User.UserName,
-            UserId = x.User.Id
+            UserId = x.User.Id,
+            CommentsCount = _dbContext.Comments.Where(y => y.Post.Id == x.Id).Count(),
+            IsLiked = _dbContext.Likes.Include(x => x.Post).Include(x => x.User).Any(y => y.Post == x && y.User.Id == query.UserId)
+
         }).ToList();
 
         return result;

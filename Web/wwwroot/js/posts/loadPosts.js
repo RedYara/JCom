@@ -2,12 +2,12 @@ let page = 0;
 let isLoading = false;
 
 function loadPosts(userId) {
-    if (isLoading) return; 
+    if (isLoading) return;
     isLoading = true;
     $.ajax({
         url: `/posts/loadposts?userId=${userId}&page=${page}`,
         type: 'GET',
-        success: function(data) {
+        success: function (data) {
             if (data && data.$values.length > 0) {
                 data.$values.forEach(post => {
                     $('#newsFeed').append(`
@@ -29,16 +29,44 @@ function loadPosts(userId) {
                                 </div>
                                 <p>${post.text}</p>
                                 <div class="d-flex justify-content-between">
-                                    <button class="btn btn-outline-danger btn-sm">
+                                    <button id="likes-${post.postId}" class="btn ${post.isLiked ? "btn-danger" : "btn-outline-danger"} btn-sm" onclick="likePost('${post.postId}','${userId}')">
                                         <i class="far fa-thumbs-up"></i> Нравится (${post.likesCount})
                                     </button>
-                                    <button class="btn btn-outline-primary btn-sm">
+                                    <button class="btn btn-outline-primary btn-sm" data-bs-toggle="collapse"
+                                    data-bs-target="#comments-${post.postId}" onclick="loadComments('${post.postId}', '${userId}')">
                                         <i class="far fa-comment"></i> Комментировать (${post.commentsCount ?? 0})
                                     </button>
                                     <button class="btn btn-outline-secondary btn-sm">
                                         <i class="fas fa-share"></i> Поделиться
                                     </button>
                                 </div>
+
+                                    
+                                <div class="collapse" id="comments-${post.postId}">
+                                <div class="mt-4">
+                                    <!-- Список комментариев -->
+                                    <div class="comments-list mb-3" id="comments-list-${post.postId}">
+                                        <!-- Комментарии будут загружены сюда -->
+                                        <div class="text-center py-3">
+                                            <div class="spinner-border text-primary" role="status">
+                                                <span class="visually-hidden">Загрузка...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                        
+                                    <!-- Форма нового комментария -->
+                                    <div class="comment-form">
+                                        <div class="input-group">
+                                            <textarea class="form-control" placeholder="Напишите комментарий..."
+                                                rows="2"></textarea>
+                                            <button class="btn btn-primary" type="button"
+                                                onclick="addComment(${post.postId}, '${userId}')">
+                                                <i class="fas fa-paper-plane"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             </div>
                         </div>
 
@@ -52,10 +80,10 @@ function loadPosts(userId) {
                 $('#noMorePostsMessage').show();
             }
         },
-        error: function(xhr, status, error) {
+        error: function (xhr, status, error) {
             console.error('Ошибка при загрузке постов:', error);
         },
-        complete: function(){
+        complete: function () {
             isLoading = false;
         }
     });

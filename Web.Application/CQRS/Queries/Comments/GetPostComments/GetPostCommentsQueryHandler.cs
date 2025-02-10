@@ -16,7 +16,7 @@ public class GetPostCommentsQueryHandler(IDbContext dbContext) : IRequestHandler
                 .ThenInclude(x => x.UserImage)
             .Include(x => x.Post)
             .Where(x => x.Post.Id == request.PostId)
-            .OrderByDescending(x => x.Id)
+            .OrderBy(x => x.Id)
             .ToListAsync(cancellationToken);
 
         var result = comments.Select(x =>
