@@ -11,14 +11,18 @@ public class DeleteCommentCommandHandler(IDbContext dbContext) : IRequestHandler
     {
         var comment = await _dbContext.Comments
             .Include(x => x.User)
-            .Where(x => x.Id == request.CommentId && x.User.Id == request.UserId)
+            .Include(x => x.Post)
+            .Where(x => x.Id == request.CommentId)
             .FirstOrDefaultAsync(cancellationToken);
 
         if (comment is null)
             return false;
 
-        _dbContext.Comments.Remove(comment);
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        if (comment.Post.Id == request.PostId || comment.User.UserTag == request.UserTag)
+        {
+            _dbContext.Comments.Remove(comment);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
 
         return true;
     }

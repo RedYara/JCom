@@ -16,9 +16,10 @@ function deleteComment(commentId, userId, postId) {
                 contentType: 'application/json',
                 data: JSON.stringify({
                     commentId: commentId,
-                    userId: userId
+                    userId: userId,
+                    postId: postId
                 }),
-                success: function(response) {
+                success: function (response) {
                     const commentElement = document.querySelector(`#comment-${commentId}`);
                     if (commentElement) {
                         commentElement.remove();
@@ -27,9 +28,18 @@ function deleteComment(commentId, userId, postId) {
                         const commentsCount = document.querySelector(`[data-bs-target="#comments-${postId}"]`);
                         const currentCount = parseInt(commentsCount.textContent.match(/\d+/)[0]) || 0;
                         commentsCount.innerHTML = `<i class="far fa-comment"></i> Комментировать (${currentCount - 1})`;
+
+                        if (currentCount - 1 <= 0) {
+                            const commentsList = document.getElementById(`comments-list-${postId}`);
+                            commentsList.innerHTML = `
+                <div class="text-center py-3 text-muted">
+                    Пока нет комментариев. Будьте первым!
+                </div>
+            `;
+                        }
                     }
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     Swal.fire('Ошибка сети!', 'Попробуйте позже.', 'error');
                 }
             });

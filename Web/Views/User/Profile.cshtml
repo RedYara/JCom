@@ -1,8 +1,12 @@
 @using System.Security.Claims
+@using Domain.Enum
+@using Web.Extensions
 @model Web.Models.UserDtoModels.ProfileDto;
 @{
-
-    string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    ViewData["Title"] = "Профиль";
+    string currentUserId = User.Identity.GetUserId();
+    string currentUserImagePath = User.Identity.GetUserImagePath();
+    string currentUserTag = User.Identity.GetUserTag();
 }
 <div class="row mt-4">
     <!-- Левая колонка - Аватар и друзья -->
@@ -18,6 +22,31 @@
                 </div>
                 <h2 class="mb-3">@Model.UserName</h2>
 
+                <!-- Кнопка в зависимости от статуса дружбы -->
+                <div id="friends-button">
+                    @if (Model.UserTag != currentUserTag)
+                    {
+                        @if (Model.FriendStatus == FriendStatus.NotFriends)
+                        {
+                            <button class="btn btn-success" onclick="addToFriendList('@Model.UserTag')">Добавить в
+                                друзья</button>
+                        }
+                        else if (Model.FriendStatus == FriendStatus.Subscribed)
+                        {
+                            <button class="btn btn-warning" onclick="removeFromFriendList('@Model.UserTag')">Отписаться</button>
+                        }
+                        else if (Model.FriendStatus == FriendStatus.Friends)
+                        {
+                            <button class="btn btn-danger" onclick="removeFromFriendList('@Model.UserTag')">Удалить из
+                                друзей</button>
+                        }
+                        else if (Model.FriendStatus == FriendStatus.Blocked)
+                        {
+                            <button class=" btn btn-secondary" disabled>Заблокирован</button>
+                        }
+                    }
+                </div>
+
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h5>Друзья <span class="badge bg-secondary">@Model.UserFriends.Count</span></h5>
                     <button class="btn btn-link" id="toggleFriends">
@@ -26,24 +55,23 @@
                 </div>
 
                 @* <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
+                    <img loading="lazy" src="https://via.placeholder.com/40" class="rounded-circle me-2" alt="Друг">
+                    <span>Мария Петрова</span>
+                </a>
+                <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
+                    <img loading="lazy" src="https://via.placeholder.com/40" class="rounded-circle me-2" alt="Друг">
+                    <span>Алексей Смирнов</span>
+                </a>
+                <!-- Остальные друзья (скрытые по умолчанию) -->
+                <div class="friends-collapse collapse">
                     <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
                         <img loading="lazy" src="https://via.placeholder.com/40" class="rounded-circle me-2" alt="Друг">
-                        <span>Мария Петрова</span>
+                        <span>Ольга Иванова</span>
                     </a>
-                    <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
-                        <img loading="lazy" src="https://via.placeholder.com/40" class="rounded-circle me-2" alt="Друг">
-                        <span>Алексей Смирнов</span>
-                    </a>
-                    <!-- Остальные друзья (скрытые по умолчанию) -->
-                    <div class="friends-collapse collapse">
-                        <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
-                            <img loading="lazy" src="https://via.placeholder.com/40" class="rounded-circle me-2"
-                                alt="Друг">
-                            <span>Ольга Иванова</span>
-                        </a>
-                        <!-- Добавьте больше друзей при необходимости -->
-                    </div>
-                </div> *@
+                    <!-- Добавьте больше друзей при необходимости -->
+                </div>
+            </div> *@
             </div>
         </div>
     </div>
@@ -52,72 +80,91 @@
     <div class="col-md-8">
         <div class="card shadow mb-4">
             <div class="card-body">
-                <h3 class="mb-4"><i class="fas fa-clipboard me-2"></i>Последние посты</h3>
-                @foreach (var post in Model.UserPosts)
+                <div class="d-flex justify-content-between mb-4">
+                    <span style="font-size:1.75rem"><i class="fas fa-clipboard me-2"></i>
+                        Последние посты</span>
+                    @if (Model.UserPosts.Count != 0)
+                    {
+                        <button type="button" class="btn btn-outline-primary">Просмотреть все</button>
+                    }
+                </div>
+                @if (Model.UserPosts.Count == 0)
                 {
-                    <div class="card post-card mb-3">
-                        <div class="card-body">
-                            <!-- Заголовок поста -->
-                            <div class="d-flex align-items-center mb-3">
-                                <img loading="lazy" src="/@post.UserImage" style="width: 60px; height: 60px;"
-                                    class="rounded-circle me-3 img-thumbnail" alt="Profile">
-                                <div class="d-flex justify-content-between align-items-center w-100">
-                                    <div>
-                                        <h6 class="mb-0">@post.UserName</h6>
-                                        <small title="@post.PostDate" class="text-muted">@post.PostDateHumanized
-                                            назад</small>
+                    <div class="text-muted text-center mt-3"> Постов пока нет.</div>
+
+                }
+                else
+                {
+                    foreach (var post in Model.UserPosts)
+                    {
+                        <div class="card post-card mb-3" id="post-card-@post.Id">
+                            <div class="card-body">
+                                <!-- Заголовок поста -->
+                                <div class="d-flex align-items-center mb-3">
+                                    <img loading="lazy" src="/@post.UserImage" style="width: 60px; height: 60px;"
+                                        class="rounded-circle me-3 img-thumbnail" alt="Profile">
+                                    <div class="d-flex justify-content-between align-items-center w-100">
+                                        <div>
+                                            <h6 class="mb-0">@post.UserName</h6>
+                                            <small title="@post.PostDate" class="text-muted">@post.PostDateHumanized
+                                                назад</small>
+                                        </div>
+                                        <button class="btn btn-outline-danger btn-sm ms-2"
+                                            onclick="deletePost('@currentUserId','@(post.Id)')">
+                                            <i class="fas fa-times"></i>
+                                        </button>
                                     </div>
-                                    <button class="btn btn-outline-danger btn-sm ms-2" onclick="deletePost('@(post.Id)')">
-                                        <i class="fas fa-times"></i>
+                                </div>
+
+                                <!-- Текст поста -->
+                                <p>@post.Text</p>
+
+                                <!-- Кнопки действий -->
+                                <div class="d-flex justify-content-between">
+                                    <button id="likes-@(post.Id)"
+                                        class="btn @(post.IsLiked ? "btn-danger" : "btn-outline-danger") btn-sm"
+                                        onclick="likePost('@(post.Id)','@(currentUserId)')">
+                                        <i class="far fa-thumbs-up"></i> Нравится (@(post.LikesCount))
+                                    </button>
+                                    <button class="btn btn-outline-primary btn-sm" data-bs-toggle="collapse"
+                                        data-bs-target="#comments-@post.Id"
+                                        onclick="loadComments('@post.Id', '@currentUserId')">
+                                        <i class="far fa-comment"></i> Комментировать (@post.CommentsCount)
+                                    </button>
+                                    <button class="btn btn-outline-secondary btn-sm">
+                                        <i class="fas fa-share"></i> Поделиться
                                     </button>
                                 </div>
-                            </div>
 
-                            <!-- Текст поста -->
-                            <p>@post.Text</p>
-
-                            <!-- Кнопки действий -->
-                            <div class="d-flex justify-content-between">
-                                <button class="btn btn-outline-danger btn-sm">
-                                    <i class="far fa-thumbs-up"></i> Нравится (@post.LikesCount)
-                                </button>
-                                <button class="btn btn-outline-primary btn-sm" data-bs-toggle="collapse"
-                                    data-bs-target="#comments-@post.Id" onclick="loadComments('@post.Id', '@userId')">
-                                    <i class="far fa-comment"></i> Комментировать (@post.CommentsCount)
-                                </button>
-                                <button class="btn btn-outline-secondary btn-sm">
-                                    <i class="fas fa-share"></i> Поделиться
-                                </button>
-                            </div>
-
-                            <!-- Секция комментариев (скрыта по умолчанию) -->
-                            <div class="collapse" id="comments-@post.Id">
-                                <div class="mt-4">
-                                    <!-- Список комментариев -->
-                                    <div class="comments-list mb-3" id="comments-list-@post.Id">
-                                        <!-- Комментарии будут загружены сюда -->
-                                        <div class="text-center py-3">
-                                            <div class="spinner-border text-primary" role="status">
-                                                <span class="visually-hidden">Загрузка...</span>
+                                <!-- Секция комментариев (скрыта по умолчанию) -->
+                                <div class="collapse" id="comments-@post.Id">
+                                    <div class="mt-4">
+                                        <!-- Список комментариев -->
+                                        <div class="comments-list mb-3" id="comments-list-@post.Id">
+                                            <!-- Комментарии будут загружены сюда -->
+                                            <div class="text-center py-3">
+                                                <div class="spinner-border text-primary" role="status">
+                                                    <span class="visually-hidden">Загрузка...</span>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <!-- Форма нового комментария -->
-                                    <div class="comment-form">
-                                        <div class="input-group">
-                                            <textarea class="form-control" placeholder="Напишите комментарий..."
-                                                rows="2"></textarea>
-                                            <button class="btn btn-primary" type="button"
-                                                onclick="addComment(@post.Id, '@userId')">
-                                                <i class="fas fa-paper-plane"></i>
-                                            </button>
+                                        <!-- Форма нового комментария -->
+                                        <div class="comment-form">
+                                            <div class="input-group">
+                                                <textarea class="form-control" placeholder="Напишите комментарий..."
+                                                    rows="2"></textarea>
+                                                <button class="btn btn-primary" type="button"
+                                                    onclick="addComment(@post.Id, '@currentUserId')">
+                                                    <i class="fas fa-paper-plane"></i>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    }
                 }
             </div>
         </div>
@@ -126,21 +173,28 @@
         <div class="card shadow">
             <div class="card-body">
                 <h3 class="mb-4"><i class="fas fa-comments me-2"></i>Последние комментарии</h3>
-                @foreach (var comment in Model.UserComments)
+                @if (Model.UserComments.Count == 0)
                 {
-                    <div class="comment mb-3">
-                        <div class="d-flex align-items-start">
-                            <div class="flex-shrink-0">
-                                <i class="fas fa-comment-dots fa-2x me-2"></i>
-                            </div>
-                            <div class="flex-grow-1 ms-3">
-                                <p class="mb-1">@comment.Text</p>
-                                <small class="text-muted">Комментарий к посту <a href="#">"@comment.PostText"</a></small>
-                                <small title="@comment.CommentDate" class="text-muted d-block">@comment.CommentDateHumanized
-                                    назад</small>
+                    <div class="text-muted text-center mt-3"> Комментариев пока нет.</div>
+                }
+                else
+                {
+                    foreach (var comment in Model.UserComments)
+                    {
+                        <div class="comment mb-3">
+                            <div class="d-flex align-items-start">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-comment-dots fa-2x me-2"></i>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <p class="mb-1">@comment.Text</p>
+                                    <small class="text-muted">Комментарий к посту <a href="#">"@comment.PostText"</a></small>
+                                    <small title="@comment.CommentDate" class="text-muted d-block">@comment.CommentDateHumanized
+                                        назад</small>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    }
                 }
 
             </div>
@@ -149,6 +203,10 @@
 </div>
 
 
+<script src="~/js/likes/likePost.js"></script>
+<script src="~/js/likes/likePost.js"></script>
+<script src="~/js/friend/addToFriends.js"></script>
+<script src="~/js/friend/removeFriend.js"></script>
 <script src="~/js/comments/loadComments.js"></script>
 <script src="~/js/comments/deleteComment.js"></script>
 <script src="~/js/comments/addComment.js"></script>

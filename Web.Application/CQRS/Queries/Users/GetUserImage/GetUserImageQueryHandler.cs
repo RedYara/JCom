@@ -10,10 +10,10 @@ public class GetUserImageQueryHandler(IDbContext dbContext) : IRequestHandler<Ge
     private readonly IDbContext _dbContext = dbContext;
     public async Task<string> Handle(GetUserImageQuery request, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(request.UserId))
+        if (string.IsNullOrWhiteSpace(request.UserTag))
             return "";
 
-        string userImagePath = await _dbContext.UserImages.Where(x => x.UserId == request.UserId).Select(x => x.Path).FirstOrDefaultAsync(cancellationToken) ?? "";
+        string userImagePath = await _dbContext.UserImages.Where(x => x.User.UserTag == request.UserTag).Select(x => x.Path).FirstOrDefaultAsync(cancellationToken) ?? "";
         if (string.IsNullOrWhiteSpace(userImagePath))
             return "";
 

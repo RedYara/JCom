@@ -1,10 +1,13 @@
 ﻿@using System.Security.Claims
 @using Humanizer
+@using Web.Extensions
 @model Web.Models.NewsFeedDto;
 
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Новости";
+    string userTag = User.FindFirst(CustomClaimTypes.UserTagIdentifier)?.Value;
     string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    string userImagePath = User.Identity.GetUserImagePath();
 }
 <div class="container mt-4">
     <div class="row g-4">
@@ -12,10 +15,10 @@
         <div class="col-lg-3">
             <div class="card mb-3">
                 <div class="card-body text-center">
-                    <img loading="lazy" src="@Model.ImagePath" class="rounded-circle mb-3 img-thumbnail"
+                    <img loading="lazy" src="@userImagePath" class="rounded-circle mb-3 img-thumbnail"
                         alt="Profile Image">
                     <h5>@User.Identity.Name</h5>
-                    <p class="text-muted">@@ivan_ivanov</p>
+                    <p class="text-muted">@userTag</p>
                     <div class="d-flex justify-content-between">
                         <div>
                             <h6 class="mb-0">250</h6>
@@ -35,7 +38,7 @@
                 <div class="card mb-3">
                     <div class="card-body">
                         <div class="d-flex">
-                            <img loading="lazy" src="@Model.ImagePath" style="width: 60px; height: 60px;"
+                            <img loading="lazy" src="@userImagePath" style="width: 60px; height: 60px;"
                                 class="rounded-circle me-3 img-thumbnail" alt="Profile">
                             <textarea class="form-control" rows="2" placeholder="Что у вас нового?"
                                 id="feedTextArea"></textarea>
@@ -50,7 +53,7 @@
                                 </button>
                             </div>
                             <button class="btn btn-primary btn-sm"
-                                onclick="publishPost('@(userId)', '@Model.ImagePath', '@User.Identity.Name')">Опубликовать</button>
+                                onclick="publishPost('@(userId)', '@userImagePath', '@User.Identity.Name')">Опубликовать</button>
                         </div>
                     </div>
                 </div>
@@ -107,6 +110,7 @@
 </script>
 
 <script src="~/js/comments/loadComments.js"></script>
+<script src="~/js/posts/deletePost.js"></script>
 <script src="~/js/likes/likePost.js"></script>
 <script src="~/js/comments/addComment.js"></script>
 <script src="~/js/comments/deleteComment.js"></script>

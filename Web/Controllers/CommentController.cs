@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Web.Application.CQRS.Commands.Comments.DeleteComment;
 using Web.Application.CQRS.Commands.Comments.LeaveComment;
 using Web.Application.CQRS.Queries.Comments.GetPostComments;
+using Web.Extensions;
 using Web.Models.CommentDtoModels;
 
 namespace Web.Controllers;
@@ -28,7 +29,7 @@ public class CommentController : BaseController
         {
             PostId = request.PostId,
             Text = request.Text,
-            UserId = request.UserId
+            UserTag = User.Identity.GetUserTag()
         };
         var vm = await Mediator.Send(command);
         return vm ? Ok() : BadRequest();
@@ -40,7 +41,8 @@ public class CommentController : BaseController
         var command = new DeleteCommentCommand()
         {
             CommentId = request.CommentId,
-            UserId = request.UserId
+            UserTag = User.Identity.GetUserTag(),
+            PostId = request.PostId
         };
         var vm = await Mediator.Send(command);
 

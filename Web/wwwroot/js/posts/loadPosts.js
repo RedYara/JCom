@@ -14,10 +14,14 @@ function loadPosts(userId) {
                         <div class="card post-card mb-3">
                             <div class="card-body">
                                 <div class="d-flex align-items-center mb-3">
-                                    <img loading="lazy" src="${post.userImage}" style="width: 60px; height: 60px;" class="rounded-circle me-3 img-thumbnail" alt="Profile">
+                                    <a href="/Profile?id=${post.userPostedTag}">
+                                        <img loading="lazy" src="${post.userImage}" style="width: 60px; height: 60px;" class="rounded-circle me-3 img-thumbnail" alt="Profile">
+                                    </a>
                                     <div class="d-flex justify-content-between align-items-center w-100">
                                         <div>
-                                            <h6 class="mb-0">${post.userName}</h6>
+                                            <a href="/Profile?id=${post.userPostedTag}" style="text-decoration: none; color: inherit;">
+                                                <h6 class="mb-0">${post.userName}</h6>
+                                            </a>
                                             <small title="${new Date(post.postDate).toLocaleString()}" class="text-muted">${post.postDateHumanized} назад</small>
                                         </div>
                                         ${post.userId === userId ? `
@@ -27,6 +31,7 @@ function loadPosts(userId) {
                                         ` : ''}
                                     </div>
                                 </div>
+
                                 <p>${post.text}</p>
                                 <div class="d-flex justify-content-between">
                                     <button id="likes-${post.postId}" class="btn ${post.isLiked ? "btn-danger" : "btn-outline-danger"} btn-sm" onclick="likePost('${post.postId}','${userId}')">

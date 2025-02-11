@@ -3,6 +3,7 @@ namespace Web.Application.CQRS.Queries.Posts.GetPostsForNewsFeed;
 public class GetPostsVm
 {
     public int PostId { get; set; }
+    public string UserPostedTag { get; set; }
     public string UserId { get; set; }
     public string UserName { get; set; }
     public string UserImage { get; set; }

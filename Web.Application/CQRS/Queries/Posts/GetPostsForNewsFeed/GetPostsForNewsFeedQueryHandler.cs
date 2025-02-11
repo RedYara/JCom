@@ -16,7 +16,7 @@ public class GetPostsForNewsFeedQueryHandler(IDbContext dbContext) : IRequestHan
         var posts = await _dbContext.Posts
             .Include(x => x.User)
                 .ThenInclude(x => x.UserImage)
-            .Where(x => x.User.Id == query.UserId)
+            // .Where(x => x.User.Id == query.UserId )
             .OrderByDescending(x => x.Id)
             .Skip(query.Page * 5)
             .Take(5)
@@ -32,6 +32,7 @@ public class GetPostsForNewsFeedQueryHandler(IDbContext dbContext) : IRequestHan
             Text = x.Text,
             UserImage = x.User.UserImage.Path,
             UserName = x.User.UserName,
+            UserPostedTag = x.User.UserTag,
             UserId = x.User.Id,
             CommentsCount = _dbContext.Comments.Where(y => y.Post.Id == x.Id).Count(),
             IsLiked = _dbContext.Likes.Include(x => x.Post).Include(x => x.User).Any(y => y.Post == x && y.User.Id == query.UserId)

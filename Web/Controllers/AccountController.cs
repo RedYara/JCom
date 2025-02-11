@@ -5,6 +5,10 @@ using Domain;
 using Web.Models.AccountDtoModels;
 using Microsoft.Win32.SafeHandles;
 using Web.Application.Interfaces;
+using System.Security.Claims;
+using Web.Extensions;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace Web.Controllers
 {
@@ -19,7 +23,7 @@ namespace Web.Controllers
         [AllowAnonymous]
         public IActionResult Login(string returnUrl)
         {
-            if (User.Identity.IsAuthenticated) return Redirect("/");
+            if (User.Identity.IsAuthenticated) return Redirect("/home/index");
             return View(new LoginModelDto { ReturnUrl = returnUrl });
         }
 
@@ -38,8 +42,18 @@ namespace Web.Controllers
                         await _signInManager.SignOutAsync();
                         if ((await _signInManager.PasswordSignInAsync(user, loginModel.Password, false, false)).Succeeded)
                         {
+                            var claims = new List<Claim>
+                            {
+                                new(CustomClaimTypes.UserNameIdentifier, user.UserName),
+                                new(CustomClaimTypes.UserIdIdentifier, user.Id.ToString()),
+                                new(CustomClaimTypes.UserTagIdentifier, user.UserTag),
+                                new(CustomClaimTypes.UserImagePathIdentifier, _dbContext.UserImages.FirstOrDefault(x => x.User == user).Path)
+                            };
+
+                            await _signInManager.SignInWithClaimsAsync(user, true, claims);
+
                             string ReturnUrl = loginModel.ReturnUrl;
-                            ReturnUrl ??= "/";
+                            ReturnUrl ??= "/home/index";
                             return Redirect(ReturnUrl);
                         }
                     }
@@ -48,9 +62,8 @@ namespace Web.Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine("Exception: " + e.Message);
+                Console.WriteLine("Exception: " + e);
             }
-
 
             return View(loginModel);
         }
@@ -73,6 +86,9 @@ namespace Web.Controllers
                 Email = registerData.Email,
                 UserName = registerData.Username,
                 SecurityStamp = "dummyStamp",
+                UserTag = registerData.UserTag,
+                Name = registerData.FirstName,
+                Surname = registerData.LastName
             };
 
             string uploadPath = Path.Join(_hostEnvironment.WebRootPath, "UserAvatars", registerData.Logo.FileName);
@@ -113,6 +129,26 @@ namespace Web.Controllers
         public IActionResult AccessDenied()
         {
             return View();
+        }
+
+        [AllowAnonymous]
+        [AcceptVerbs("Get", "Post")]
+        public IActionResult CheckTag(string UserTag)
+        {
+            string formattedTag = UserTag.Trim();
+            if (_dbContext.Users.Any(x => x.UserTag == formattedTag))
+                return Json(false);
+            return Json(true);
+        }
+
+        [AllowAnonymous]
+        [AcceptVerbs("Get", "Post")]
+        public IActionResult CheckUserName(string UserName)
+        {
+            string formattedUserName = UserName.Trim();
+            if (_dbContext.Users.Any(x => x.UserName == formattedUserName))
+                return Json(false);
+            return Json(true);
         }
     }
 }

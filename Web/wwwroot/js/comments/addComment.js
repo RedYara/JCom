@@ -13,7 +13,7 @@ function addComment(postId, userId) {
             userId: userId
         }),
         success: function (response) {
-            loadComments(postId, userId);
+            loadComments(postId, userId, true);
 
             document.querySelector(`#comments-${postId} textarea`).value = '';
 

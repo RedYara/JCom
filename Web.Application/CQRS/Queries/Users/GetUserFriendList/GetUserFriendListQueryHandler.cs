@@ -10,9 +10,9 @@ public class GetUserFriendListQueryHandler(IDbContext dbContext) : IRequestHandl
     private readonly IDbContext _dbContext = dbContext;
     public async Task<List<Friend>> Handle(GetUserFriendListQuery request, CancellationToken cancellationToken)
     {
-        var user = await _dbContext.Users.Where(x => x.Id == request.UserId).FirstOrDefaultAsync(cancellationToken);
+        var user = await _dbContext.Users.Where(x => x.UserTag == request.UserTag).FirstOrDefaultAsync(cancellationToken);
         if (user is null)
-            return null;
+            return [];
 
         return [.. user.Friends];
     }

@@ -1,11 +1,13 @@
-function loadComments(postId, userId) {
+function loadComments(postId, userId, skipActive) {
     const commentsList = document.getElementById(`comments-list-${postId}`);
-    if (!commentsList.classList.contains("active")) {
-        commentsList.classList.add("active");
-    }
-    else {
-        commentsList.classList.remove("active");
-        return;
+    if (!skipActive) {
+        if (!commentsList.classList.contains("active")) {
+            commentsList.classList.add("active");
+        }
+        else {
+            commentsList.classList.remove("active");
+            return;
+        }
     }
 
     commentsList.innerHTML = `
@@ -35,7 +37,7 @@ function loadComments(postId, userId) {
                                     <div class="d-flex align-items-center">
                                         <strong class="me-2">${comment.userName}</strong>
                                         <small title="${comment.commentDate}" class="text-muted">${comment.commentDateHumanized} назад</small>
-                                        ${comment.userId === userId ? '<button class="btn btn-danger btn-sm ms-2" onclick="deleteComment(' + comment.commentId + ', \'' + userId + '\',' + comment.postId + ')">✖</button>' : ''}
+                                        ${comment.userId === userId || comment.userPostedId === userId ? '<button class="btn btn-danger btn-sm ms-2" onclick="deleteComment(' + comment.commentId + ', \'' + userId + '\',' + comment.postId + ')">✖</button>' : ''}
                                     </div>
                                     <p class="mb-0">${comment.text}</p>
                                 </div>

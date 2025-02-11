@@ -16,7 +16,7 @@ public class GetUserPostsQueryHandler(IDbContext dbContext) : IRequestHandler<Ge
         var posts = await _dbContext.Posts
             .Include(x => x.User)
                 .ThenInclude(x => x.UserImage)
-            .Where(x => x.User.Id == query.UserId)
+            .Where(x => x.User.UserTag == query.UserTag)
             .OrderByDescending(x => x.Id)
             .Take(3)
             .ToListAsync(cancellationToken); // Получаем список постов асинхронно
@@ -25,13 +25,14 @@ public class GetUserPostsQueryHandler(IDbContext dbContext) : IRequestHandler<Ge
         var result = posts.Select(x => new GetUserPostsVm()
         {
             Id = x.Id,
-            LikesCount = x.Likes,
+            LikesCount = _dbContext.Likes.Include(x => x.Post).Count(y => y.Post == x),
             CommentsCount = _dbContext.Comments.Count(y => y.Post.Id == x.Id),
             PostDate = x.PostDate,
             PostDateHumanized = (-(DateTime.UtcNow - x.PostDate)).Humanize(),
             Text = x.Text,
             UserImage = x.User.UserImage.Path,
             UserName = x.User.UserName,
+            IsLiked = _dbContext.Likes.Include(x => x.Post).Include(x => x.User).Any(y => y.Post == x && y.User.Id == query.CurrentUserId),
             UserId = x.User.Id
         }).ToList();
 

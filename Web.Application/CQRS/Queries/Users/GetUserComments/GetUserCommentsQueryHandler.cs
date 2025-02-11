@@ -16,7 +16,7 @@ public class GetUserPostsQueryHandler(IDbContext dbContext) : IRequestHandler<Ge
             .Include(x => x.User)
                 .ThenInclude(x => x.UserImage)
             .Include(x => x.Post)
-            .Where(x => x.User.Id == query.UserId)
+            .Where(x => x.User.UserTag == query.UserTag)
             .OrderByDescending(x => x.Id)
             .Take(3)
             .ToListAsync(cancellationToken);

@@ -3,25 +3,23 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.Application.CQRS.Queries.Posts.GetPostsForNewsFeed;
 using Web.Application.CQRS.Queries.Users.GetUserImage;
+using Web.Extensions;
 using Web.Models;
 
 namespace Web.Controllers;
 
 [Authorize]
-public class HomeController : BaseController
+public class HomeController(ILogger<HomeController> logger) : BaseController
 {
-    private readonly ILogger<HomeController> _logger;
-
-    public HomeController(ILogger<HomeController> logger)
-    {
-        _logger = logger;
-    }
-
     public async Task<IActionResult> Index()
     {
+        foreach (var claim in User.Claims)
+        {
+            Console.WriteLine($"Claim Type: {claim.Type}, Claim Value: {claim.Value}");
+        }
         var userImageQuery = new GetUserImageQuery()
         {
-            UserId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+            UserTag = User.Identity.GetUserTag()
         };
         var userImageQueryResult = await Mediator.Send(userImageQuery);
 

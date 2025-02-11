@@ -15,7 +15,7 @@ public class LeaveCommentCommandHandler(IDbContext dbContext) : IRequestHandler<
             CommentDate = DateTime.UtcNow,
             Post = await _dbContext.Posts.FirstOrDefaultAsync(x => x.Id == request.PostId, cancellationToken: cancellationToken),
             Text = request.Text,
-            User = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == request.UserId, cancellationToken: cancellationToken)
+            User = await _dbContext.Users.FirstOrDefaultAsync(x => x.UserTag == request.UserTag, cancellationToken: cancellationToken)
         };
 
         await _dbContext.Comments.AddAsync(comment, cancellationToken);

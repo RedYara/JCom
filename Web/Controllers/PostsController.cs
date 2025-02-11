@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Web.Application.CQRS.Commands.Posts.DeletePost;
 using Web.Application.CQRS.Commands.Posts.PublishPost;
 using Web.Application.CQRS.Queries.Posts.GetPostsForNewsFeed;
 using Web.Models.PostDtoModels;
@@ -32,5 +33,17 @@ public class PostsController : BaseController
         };
         var vm = await Mediator.Send(postsQuery);
         return Ok(vm);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> DeletePost([FromBody] DeletePostDto request)
+    {
+        var deletePostCommand = new DeletePostCommand()
+        {
+            PostId = request.PostId,
+            UserId = request.UserId
+        };
+        var vm = await Mediator.Send(deletePostCommand);
+        return vm ? Ok() : BadRequest();
     }
 }

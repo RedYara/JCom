@@ -15,6 +15,7 @@ public class GetPostCommentsQueryHandler(IDbContext dbContext) : IRequestHandler
             .Include(x => x.User)
                 .ThenInclude(x => x.UserImage)
             .Include(x => x.Post)
+                .ThenInclude(x => x.User)
             .Where(x => x.Post.Id == request.PostId)
             .OrderBy(x => x.Id)
             .ToListAsync(cancellationToken);
@@ -29,9 +30,10 @@ public class GetPostCommentsQueryHandler(IDbContext dbContext) : IRequestHandler
                 UserName = x.User.UserName,
                 UserId = x.User.Id,
                 CommentId = x.Id,
-                PostId = x.Post.Id
+                PostId = x.Post.Id,
+                UserPostedId = x.Post.User.Id
             }).ToList();
 
-        return result;
+        return result ?? [];
     }
 }

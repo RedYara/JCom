@@ -11,5 +11,5 @@ public class Friend
     /// <summary>
     /// Идентификатор пользователя, находящийся в списке друзей
     /// </summary>
-    public int FriendId { get; set; }
+    public string FriendId { get; set; }
 }

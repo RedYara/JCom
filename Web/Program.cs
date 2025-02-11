@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.DataProtection;
 using Persistence;
 using Web.Application;
 
@@ -12,14 +12,8 @@ builder.Services.AddControllersWithViews()
         });
 builder.Services.AddApplication();
 builder.Services.AddPersistence();
-
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme,
-        options =>
-        {
-            options.LoginPath = new PathString("/account/login");
-            options.AccessDeniedPath = new PathString("/account/accessdenied");
-        });
+string keysFolder = Path.Combine(builder.Environment.ContentRootPath, "keys");
+builder.Services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(keysFolder));
 
 if (builder.Environment.IsDevelopment())
 {

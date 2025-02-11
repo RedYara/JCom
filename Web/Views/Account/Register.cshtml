@@ -22,13 +22,33 @@
                         </div>
 
                         <div class="form-group">
+                            @Html.LabelFor(m => m.UserTag, "Тег пользователя", new { @class = "control-label" })
+                            <input asp-for="UserTag" class="form-control" type="text" id="inputUserTag"
+                                placeholder="Введите тег пользователя" required />
+                            @Html.ValidationMessageFor(m => m.UserTag, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.FirstName, "Имя", new { @class = "control-label" })
+                            <input asp-for="FirstName" class="form-control" type="text" id="inputFirstName"
+                                placeholder="Введите имя" required />
+                            @Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.LastName, "Фамилия", new { @class = "control-label" })
+                            <input asp-for="LastName" class="form-control" type="text" id="inputLastName"
+                                placeholder="Введите фамилию" required />
+                            @Html.ValidationMessageFor(m => m.LastName, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group">
                             @Html.LabelFor(m => m.Email, "Почта", new { @class = "control-label" })
                             @Html.TextBoxFor(m => m.Email, "", new
                                 {
                                     @class = " form-control",
                                     required = true,
-                                    id =
-                                     "inputEmail",
+                                    id = "inputEmail",
                                     placeholder = "Введите почту"
                                 })
                             @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
@@ -53,11 +73,13 @@
                                     {
                                         @class = "form-control",
                                         type = "file",
-                                        accept =
-                                         "image/*"
+                                        accept = "image/*",
+                                        id = "inputLogo"
                                     })
+                                <!-- Превью изображения -->
+                                <img id="imagePreview" src="#" alt="Превью изображения"
+                                    style="display: none; max-width: 100%; margin-top: 10px;" />
                             </div>
-
                         </div>
 
                         <button class="btn w-100 btn-outline-primary btn-block text-uppercase mt-2"
@@ -68,3 +90,21 @@
         </div>
     </div>
 </div>
+
+<!-- Скрипт для отображения превью изображения -->
+<script>
+    document.getElementById('inputLogo').addEventListener('change', function (event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const preview = document.getElementById('imagePreview');
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        } else {
+            document.getElementById('imagePreview').style.display = 'none';
+        }
+    });
+</script>
