@@ -15,15 +15,17 @@
         <div class="col-lg-3">
             <div class="card mb-3">
                 <div class="card-body text-center">
-                    <img loading="lazy" src="@userImagePath" class="rounded-circle mb-3 img-thumbnail"
-                        alt="Profile Image">
-                    <h5>@User.Identity.Name</h5>
+                    <a href="/Profile" class="text-decoration-none text-dark">
+                        <img loading="lazy" src="@userImagePath" class="rounded-circle mb-3 img-thumbnail"
+                            alt="Profile Image">
+                        <h5>@User.Identity.Name</h5>
+                    </a>
                     <p class="text-muted">@userTag</p>
                     <div class="d-flex justify-content-between">
-                        <div>
+                        <a class="text-decoration-none text-dark" href="/Friends">
                             <h6 class="mb-0">250</h6>
                             <small>Друзей</small>
-                        </div>
+                        </a>
                         <div>
                             <h6 class="mb-0">1.2K</h6>
                             <small>Подписчиков</small>

@@ -17,16 +17,16 @@ public class AddUserToFriendListCommandHandler(IDbContext dbContext) : IRequestH
             return FriendStatus.NotFriends;
 
 
-        if (!currentUserEntity.Friends.Any(x => x.User == currentUserEntity && x.FriendId == friendUserEntity.Id))
+        if (!currentUserEntity.Friends.Any(x => x.User.Id == currentUserEntity.Id && x.FriendId == friendUserEntity.Id))
         {
             currentUserEntity.Friends.Add(new Domain.Friend
             {
-                User = currentUserEntity,
+                User = friendUserEntity,
                 FriendId = friendUserEntity.Id
             });
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-            if (friendUserEntity.Friends.Any(x => x.User == friendUserEntity && x.FriendId == currentUserEntity.Id))
+            if (friendUserEntity.Friends.Any(x => x.FriendId == currentUserEntity.Id))
                 return FriendStatus.Friends;
 
             return FriendStatus.Subscribed;

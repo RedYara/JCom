@@ -12,8 +12,6 @@ builder.Services.AddControllersWithViews()
         });
 builder.Services.AddApplication();
 builder.Services.AddPersistence();
-string keysFolder = Path.Combine(builder.Environment.ContentRootPath, "keys");
-builder.Services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(keysFolder));
 
 if (builder.Environment.IsDevelopment())
 {

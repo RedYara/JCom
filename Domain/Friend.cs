@@ -3,6 +3,7 @@ namespace Domain;
 public class Friend
 {
     public int Id { get; set; }
+    public string UserId { get; set; }
     /// <summary>
     /// Пользователь
     /// </summary>

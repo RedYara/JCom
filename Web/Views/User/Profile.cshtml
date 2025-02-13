@@ -8,6 +8,8 @@
     string currentUserImagePath = User.Identity.GetUserImagePath();
     string currentUserTag = User.Identity.GetUserTag();
 }
+@await Html.PartialAsync("Modals/_uploadNewPhoto")
+
 <div class="row mt-4">
     <!-- Левая колонка - Аватар и друзья -->
     <div class="col-md-4 mb-4">
@@ -16,7 +18,8 @@
                 <div class="position-relative">
                     <img loading="lazy" src="/@Model.UserImagePath" class="rounded-circle mb-3 img-thumbnail"
                         alt="Аватар">
-                    <button class="btn btn-primary btn-sm position-absolute bottom-0 end-0 rounded-circle">
+                    <button class="btn btn-primary btn-sm position-absolute bottom-0 end-0 rounded-circle"
+                        data-bs-toggle="modal" data-bs-target="#changeAvatarModal">
                         <i class="fas fa-camera"></i>
                     </button>
                 </div>
@@ -48,30 +51,20 @@
                 </div>
 
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5>Друзья <span class="badge bg-secondary">@Model.UserFriends.Count</span></h5>
-                    <button class="btn btn-link" id="toggleFriends">
-                        <i class="fas fa-chevron-down"></i>
-                    </button>
+                    <h5>Друзья <span class="badge bg-secondary" id="friends-count">0</span></h5>
                 </div>
 
-                @* <div class="list-group">
-                <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
-                    <img loading="lazy" src="https://via.placeholder.com/40" class="rounded-circle me-2" alt="Друг">
-                    <span>Мария Петрова</span>
-                </a>
-                <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
-                    <img loading="lazy" src="https://via.placeholder.com/40" class="rounded-circle me-2" alt="Друг">
-                    <span>Алексей Смирнов</span>
-                </a>
-                <!-- Остальные друзья (скрытые по умолчанию) -->
-                <div class="friends-collapse collapse">
-                    <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
-                        <img loading="lazy" src="https://via.placeholder.com/40" class="rounded-circle me-2" alt="Друг">
-                        <span>Ольга Иванова</span>
-                    </a>
-                    <!-- Добавьте больше друзей при необходимости -->
+                <div class="friends-list">
+                    <!-- Список друзей будет загружен сюда -->
                 </div>
-            </div> *@
+
+                <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
+                    <h5>Подписки <span class="badge bg-secondary" id="subscriptions-count">0</span></h5>
+                </div>
+
+                <div class="subscriptions-list">
+                    <!-- Список подписок будет загружен сюда -->
+                </div>
             </div>
         </div>
     </div>
@@ -83,9 +76,10 @@
                 <div class="d-flex justify-content-between mb-4">
                     <span style="font-size:1.75rem"><i class="fas fa-clipboard me-2"></i>
                         Последние посты</span>
-                    @if (Model.UserPosts.Count != 0)
+                    @if (Model.UserPosts.Count > 0)
                     {
-                        <button type="button" class="btn btn-outline-primary">Просмотреть все</button>
+                        <a type="button" asp-action="UserPosts" asp-userTag="@Model.UserTag"
+                            class="btn btn-outline-primary">Просмотреть все</a>
                     }
                 </div>
                 @if (Model.UserPosts.Count == 0)
@@ -202,10 +196,17 @@
     </div>
 </div>
 
+<script type="text/javascript">
+    $(document).ready(function () {
+        getUserFriendList('@currentUserTag', '@Model.UserTag');
+        getUserSubscriptions('@Model.UserTag');
+    })
+</script>
 
 <script src="~/js/likes/likePost.js"></script>
-<script src="~/js/likes/likePost.js"></script>
+<script src="~/js/posts/deletePost.js"></script>
 <script src="~/js/friend/addToFriends.js"></script>
+<script src="~/js/profile/getUserFriendList.js"></script>
 <script src="~/js/friend/removeFriend.js"></script>
 <script src="~/js/comments/loadComments.js"></script>
 <script src="~/js/comments/deleteComment.js"></script>

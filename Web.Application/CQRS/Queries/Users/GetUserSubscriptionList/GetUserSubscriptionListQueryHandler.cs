@@ -3,13 +3,13 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Web.Application.Interfaces;
 
-namespace Web.Application.CQRS.Queries.Users.GetUserFriendList;
+namespace Web.Application.CQRS.Queries.Users.GetUserSubscriptionList;
 
-public class GetUserFriendListQueryHandler(IDbContext dbContext) : IRequestHandler<GetUserFriendListQuery, UserFriendListVm>
+public class GetUserSubscriptionListQueryHandler(IDbContext dbContext) : IRequestHandler<GetUserSubscriptionListQuery, UserSubscriptionListVm>
 {
     private readonly IDbContext _dbContext = dbContext;
 
-    public async Task<UserFriendListVm> Handle(GetUserFriendListQuery request, CancellationToken cancellationToken)
+    public async Task<UserSubscriptionListVm> Handle(GetUserSubscriptionListQuery request, CancellationToken cancellationToken)
     {
         var user = await _dbContext.Users
             .Where(x => x.UserTag == request.UserTag)
@@ -18,10 +18,10 @@ public class GetUserFriendListQueryHandler(IDbContext dbContext) : IRequestHandl
             .FirstOrDefaultAsync(cancellationToken);
 
         if (user is null)
-            return new UserFriendListVm();
+            return new UserSubscriptionListVm();
 
-        var friends = user.Friends
-            .Where(f => _dbContext.Users
+        var subscriptions = user.Friends
+            .Where(f => !_dbContext.Users
             .Include(x => x.Friends)
             .FirstOrDefault(u => u.Id == f.FriendId)?
             .Friends.Any(friend => friend.FriendId == user.Id) ?? false)
@@ -32,7 +32,7 @@ public class GetUserFriendListQueryHandler(IDbContext dbContext) : IRequestHandl
                     .Include(x => x.Friends)
                     .FirstOrDefault(u => u.Id == f.FriendId);
 
-                return new UserFriendVm
+                return new UserSubscriptionVm
                 {
                     Id = f.FriendId,
                     UserName = friendEntity?.UserName,
@@ -41,6 +41,6 @@ public class GetUserFriendListQueryHandler(IDbContext dbContext) : IRequestHandl
                 };
             }).ToList();
 
-        return new UserFriendListVm { Friends = friends };
+        return new UserSubscriptionListVm { Subscriptions = subscriptions };
     }
 }

@@ -1,3 +1,6 @@
+@model Web.Application.CQRS.Queries.Users.GetUserFriendList.UserFriendListVm
+@using Web.Extensions;
+
 @{
     ViewData["Title"] = "Список друзей";
 }
@@ -15,46 +18,20 @@
 
                 <!-- Список друзей -->
                 <div class="friends-list">
-                    <div class="friend-card card mb-3">
-                        <div class="card-body d-flex align-items-center">
-                            <img src="https://via.placeholder.com/50" class="rounded-circle me-3" alt="Друг">
-                            <div class="flex-grow-1">
-                                <h5 class="mb-0">Мария Петрова</h5>
-                                <small class="text-muted">Онлайн</small>
-                            </div>
-                            <button class="btn btn-outline-danger btn-sm" onclick="removeFriend(1)">
-                                <i class="fas fa-user-minus"></i> Удалить
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="friend-card card mb-3">
-                        <div class="card-body d-flex align-items-center">
-                            <img src="https://via.placeholder.com/50" class="rounded-circle me-3" alt="Друг">
-                            <div class="flex-grow-1">
-                                <h5 class="mb-0">Алексей Смирнов</h5>
-                                <small class="text-muted">Был(а) 5 минут назад</small>
-                            </div>
-                            <button class="btn btn-outline-danger btn-sm" onclick="removeFriend(2)">
-                                <i class="fas fa-user-minus"></i> Удалить
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="friend-card card mb-3">
-                        <div class="card-body d-flex align-items-center">
-                            <img src="https://via.placeholder.com/50" class="rounded-circle me-3" alt="Друг">
-                            <div class="flex-grow-1">
-                                <h5 class="mb-0">Ольга Иванова</h5>
-                                <small class="text-muted">Был(а) 2 часа назад</small>
-                            </div>
-                            <button class="btn btn-outline-danger btn-sm" onclick="removeFriend(3)">
-                                <i class="fas fa-user-minus"></i> Удалить
-                            </button>
-                        </div>
-                    </div>
+                    <!-- Друзья будут загружены сюда -->
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script src="~/js/friend/removeFriend.js"></script>
+    <script src="~/js/friend/getFriendList.js"></script>
+    <script> 
+
+        $(document).ready(function () {
+            getFriendList('@(User.Identity.GetUserTag())');
+        });
+    </script>
+}

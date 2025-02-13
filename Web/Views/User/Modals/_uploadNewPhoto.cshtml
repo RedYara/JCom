@@ -1,0 +1,37 @@
+<div class="modal fade" id="changeAvatarModal" tabindex="-1" aria-labelledby="changeAvatarModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="changeAvatarModalLabel">Изменение аватарки</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="changeAvatarForm" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="avatarFile" class="form-label">Выберите новый аватар</label>
+                        <input class="form-control" type="file" id="avatarFile" name="avatarFile" accept="image/*"
+                            onchange="previewImage(event)">
+                    </div>
+                    <div class="mb-3 d-flex justify-content-center align-items-center">
+                        <img id="avatarPreview" src="#" alt="Предпросмотр аватара"
+                            style="display:none; max-width: 100%; height: auto;">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function previewImage(event) {
+        var reader = new FileReader();
+        reader.onload = function () {
+            var output = document.getElementById('avatarPreview');
+            output.src = reader.result;
+            output.style.display = 'block';
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+</script>

@@ -12,11 +12,28 @@ public class GetPostsForNewsFeedQueryHandler(IDbContext dbContext) : IRequestHan
     // TODO: Допилить метод для вывода постов друзей
     public async Task<List<GetPostsVm>> Handle(GetPostsForNewsFeedQuery query, CancellationToken cancellationToken)
     {
-        // Получение последних 5 постов от юзера
+
+        var userFrineds = await _dbContext.Users
+            .Include(x => x.Friends)
+            .FirstOrDefaultAsync(x => x.Id == query.UserId, cancellationToken);
+
+        if (userFrineds == null)
+        {
+            return [];
+        }
+
+        var friendsIds = userFrineds.Friends.Where(f => f.User.Id == query.UserId)
+            .Select(f => f.FriendId)
+            .ToList();
+
+        // Добавление самого пользователя в список
+        friendsIds.Add(query.UserId);
+
+        // Получение последних 5 постов от пользователя и его друзей
         var posts = await _dbContext.Posts
             .Include(x => x.User)
                 .ThenInclude(x => x.UserImage)
-            // .Where(x => x.User.Id == query.UserId )
+            .Where(x => friendsIds.Contains(x.User.Id))
             .OrderByDescending(x => x.Id)
             .Skip(query.Page * 5)
             .Take(5)

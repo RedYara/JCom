@@ -17,16 +17,16 @@ public class RemoveUserFromFriendListCommandHandler(IDbContext dbContext) : IReq
             return FriendStatus.NotFriends;
 
 
-        if (currentUserEntity.Friends.Any(x => x.User == currentUserEntity && x.FriendId == friendUserEntity.Id))
+        if (currentUserEntity.Friends.Any(x => x.FriendId == friendUserEntity.Id))
         {
-            var friendEntity = currentUserEntity.Friends.FirstOrDefault(x => x.User == currentUserEntity && x.FriendId == friendUserEntity.Id);
+            var friendEntity = currentUserEntity.Friends.FirstOrDefault(x => x.FriendId == friendUserEntity.Id);
             currentUserEntity.Friends.Remove(friendEntity);
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 
 
             // TODO: Доработать если пользователь находится у кого-то в списке друзей
-            if (friendUserEntity.Friends.Any(x => x.User == friendUserEntity && x.FriendId == currentUserEntity.Id))
+            if (friendUserEntity.Friends.Any(x => x.FriendId == currentUserEntity.Id))
                 return FriendStatus.NotFriends;
 
             return FriendStatus.NotFriends;

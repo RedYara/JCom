@@ -17,10 +17,6 @@ public class UserController : BaseController
     [Route("[action]")]
     public async Task<IActionResult> Profile(string? id)
     {
-        foreach (var claim in User.Claims)
-        {
-            Console.WriteLine($"Claim Type: {claim.Type}, Claim Value: {claim.Value}");
-        }
         ProfileDto vm = new();
         string currentUserId = User.Identity.GetUserId();
         if (string.IsNullOrWhiteSpace(id))
@@ -35,13 +31,6 @@ public class UserController : BaseController
             };
             vm.FriendStatus = await Mediator.Send(getFriendsStatusQuery);
         }
-
-
-        var getFriendsQuery = new GetUserFriendListQuery()
-        {
-            UserTag = id
-        };
-        vm.UserFriends = await Mediator.Send(getFriendsQuery);
 
         var getCommentsQuery = new GetUserCommentsQuery()
         {
@@ -63,9 +52,24 @@ public class UserController : BaseController
         };
         vm.UserPosts = await Mediator.Send(getUserPostsQuery);
 
-        vm.UserName = User.Identity.GetUserName();
+        vm.UserName = vm.UserPosts.FirstOrDefault()?.UserName;
         vm.UserTag = id;
 
+        return View(vm);
+    }
+
+    [Route("profile/posts")]
+    public async Task<IActionResult> UserPosts(string userTag)
+    {
+        userTag ??= User.Identity.GetUserTag();
+
+        var getUserPostsQuery = new GetUserPostsQuery()
+        {
+            UserTag = userTag,
+            CurrentUserId = User.Identity.GetUserId(),
+            Page = 0
+        };
+        var vm = await Mediator.Send(getUserPostsQuery);
         return View(vm);
     }
 }

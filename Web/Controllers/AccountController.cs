@@ -50,6 +50,11 @@ namespace Web.Controllers
                                 new(CustomClaimTypes.UserImagePathIdentifier, _dbContext.UserImages.FirstOrDefault(x => x.User == user).Path)
                             };
 
+                            foreach (var claim in claims)
+                            {
+                                await _userManager.AddClaimAsync(user, claim);
+                            }
+
                             await _signInManager.SignInWithClaimsAsync(user, true, claims);
 
                             string ReturnUrl = loginModel.ReturnUrl;
@@ -106,6 +111,19 @@ namespace Web.Controllers
             var result = await _userManager.CreateAsync(user, registerData.Password);
             if (result.Succeeded)
             {
+                var claims = new List<Claim>
+                {
+                    new(CustomClaimTypes.UserNameIdentifier, user.UserName),
+                    new(CustomClaimTypes.UserIdIdentifier, user.Id.ToString()),
+                    new(CustomClaimTypes.UserTagIdentifier, user.UserTag),
+                    new(CustomClaimTypes.UserImagePathIdentifier, userImage.Path)
+                };
+
+                foreach (var claim in claims)
+                {
+                    await _userManager.AddClaimAsync(user, claim);
+                }
+
                 // Optionally save the UserImage to the database if needed
                 await _dbContext.UserImages.AddAsync(userImage);
                 await _dbContext.SaveChangesAsync(new CancellationToken());

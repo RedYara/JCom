@@ -1,0 +1,77 @@
+@using Web.Extensions;
+@model List<Web.Application.CQRS.Queries.Users.GetUserPosts.GetUserPostsVm>
+
+@{
+    string currentUserId = User.Identity.GetUserId();
+}
+<div class="text-center">
+    <h2>Посты пользователя @Model[0].UserName</h2>
+</div>
+@foreach (var post in Model)
+{
+    <div class="card post-card mb-3 mt-2" id="post-card-@post.Id">
+    <div class="card-body">
+        <!-- Заголовок поста -->
+        <div class="d-flex align-items-center mb-3">
+            <img loading="lazy" src="/@post.UserImage" style="width: 60px; height: 60px;"
+                class="rounded-circle me-3 img-thumbnail" alt="Profile">
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <div>
+                    <h6 class="mb-0">@post.UserName</h6>
+                    <small title="@post.PostDate" class="text-muted">@post.PostDateHumanized назад</small>
+                </div>
+                <button class="btn btn-outline-danger btn-sm ms-2" onclick="deletePost('@currentUserId','@(post.Id)')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Текст поста -->
+        <p>@post.Text</p>
+
+        <!-- Кнопки действий -->
+        <div class="d-flex justify-content-between">
+            <button id="likes-@(post.Id)" class="btn @(post.IsLiked ? "btn-danger" : "btn-outline-danger") btn-sm"
+                onclick="likePost('@(post.Id)','@(currentUserId)')">
+                <i class="far fa-thumbs-up"></i> Нравится (@(post.LikesCount))
+            </button>
+            <button class="btn btn-outline-primary btn-sm" data-bs-toggle="collapse" data-bs-target="#comments-@post.Id"
+                onclick="loadComments('@post.Id', '@currentUserId')">
+                <i class="far fa-comment"></i> Комментировать (@post.CommentsCount)
+            </button>
+            <button class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-share"></i> Поделиться
+            </button>
+        </div>
+
+        <!-- Секция комментариев (скрыта по умолчанию) -->
+        <div class="collapse" id="comments-@post.Id">
+            <div class="mt-4">
+                <!-- Список комментариев -->
+                <div class="comments-list mb-3" id="comments-list-@post.Id">
+                    <!-- Комментарии будут загружены сюда -->
+                    <div class="text-center py-3">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Загрузка...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Форма нового комментария -->
+                <div class="comment-form">
+                    <div class="input-group">
+                        <textarea class="form-control" placeholder="Напишите комментарий..." rows="2"></textarea>
+                        <button class="btn btn-primary" type="button" onclick="addComment(@post.Id, '@currentUserId')">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+}
+<script src="~/js/likes/likePost.js"></script>
+<script src="~/js/comments/loadComments.js"></script>
+<script src="~/js/comments/deleteComment.js"></script>
+<script src="~/js/comments/addComment.js"></script>
