@@ -5,10 +5,10 @@ namespace Web.Extensions;
 
 public static class IdentityExtensions
 {
-    public static string GetUserTag(this IIdentity identity) => identity?.GetClaimValue(CustomClaimTypes.UserTagIdentifier);
-    public static string GetUserName(this IIdentity identity) => identity?.GetClaimValue(CustomClaimTypes.UserNameIdentifier);
-    public static string GetUserId(this IIdentity identity) => identity?.GetClaimValue(CustomClaimTypes.UserIdIdentifier);
-    public static string GetUserImagePath(this IIdentity identity) => identity?.GetClaimValue(CustomClaimTypes.UserImagePathIdentifier);
+    public static string? GetUserTag(this IIdentity identity) => identity?.GetClaimValue(CustomClaimTypes.UserTagIdentifier);
+    public static string? GetUserName(this IIdentity identity) => identity?.GetClaimValue(CustomClaimTypes.UserNameIdentifier);
+    public static string? GetUserId(this IIdentity identity) => identity?.GetClaimValue(CustomClaimTypes.UserIdIdentifier);
+    public static string? GetUserImagePath(this IIdentity identity) => identity?.GetClaimValue(CustomClaimTypes.UserImagePathIdentifier);
 
     private static string GetClaimValue(this IIdentity identity, string claimType)
     {
