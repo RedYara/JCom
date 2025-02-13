@@ -59,17 +59,23 @@ public class UserController : BaseController
     }
 
     [Route("profile/posts")]
-    public async Task<IActionResult> UserPosts(string userTag)
+    public IActionResult UserPosts(string? userTag)
     {
         userTag ??= User.Identity.GetUserTag();
 
+        return View(model: userTag);
+    }
+
+    [Route("profile/posts/loadposts")]
+    public async Task<IActionResult> GetUserPosts(string userTag, int page)
+    {
         var getUserPostsQuery = new GetUserPostsQuery()
         {
             UserTag = userTag,
             CurrentUserId = User.Identity.GetUserId(),
-            Page = 0
+            Page = page
         };
-        var vm = await Mediator.Send(getUserPostsQuery);
-        return View(vm);
+        var userPosts = await Mediator.Send(getUserPostsQuery);
+        return Ok(userPosts);
     }
 }

@@ -18,6 +18,7 @@ public class GetUserPostsQueryHandler(IDbContext dbContext) : IRequestHandler<Ge
                 .ThenInclude(x => x.UserImage)
             .Where(x => x.User.UserTag == query.UserTag)
             .OrderByDescending(x => x.Id)
+            .Skip(query.Page * 3)
             .Take(3)
             .ToListAsync(cancellationToken); // Получаем список постов асинхронно
 
