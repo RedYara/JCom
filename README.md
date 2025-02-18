@@ -25,7 +25,7 @@
 
 1. Клонируйте репозиторий:
     ```sh
-    git clone https://github.com/yourusername/JCom.git
+    git clone https://github.com/RedYara/JCom.git
     ```
 
 2. Перейдите в директорию проекта:
